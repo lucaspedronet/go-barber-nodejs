@@ -14,7 +14,8 @@ class CancellationMail {
 
   async handle({ data }) {
     const { appointment } = data;
-    // console.log('A Fila executou');
+
+    console.log('A Fila executou');
     /**
      * Envia o email para o profissional
      */

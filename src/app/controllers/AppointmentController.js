@@ -167,11 +167,10 @@ class AppointmentController {
      */
     await Queue.add(CancellationMail.key, { appointment });
 
-    return res.json({
+    return res.status(200).json({
       error: null,
       messager: 'success',
       data: appointment,
-      status: res.status(200),
     });
   }
 }
