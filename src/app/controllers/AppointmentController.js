@@ -18,7 +18,7 @@ class AppointmentController {
     const appointments = await Appointment.findAll({
       where: { user_id: req.userId, canceled_at: null },
       order: ['date'],
-      attributes: ['id', 'date'],
+      attributes: ['id', 'date', 'past', 'cancelable'],
       limit: 20,
       offset: (page - 1) * 20,
       include: [
@@ -136,7 +136,7 @@ class AppointmentController {
     });
 
     /**
-     * check: verifica se o usuário que esta logado é dono do agendamento
+     * check: verifica se o usuário que esta logado é dono do agendamento/compromisso
      */
     if (appointment.user_id !== req.userId) {
       return res.status(401).json({
@@ -145,11 +145,20 @@ class AppointmentController {
     }
 
     /**
+     * check: verifica se o usuário pode realizar o cancelamento do agendamento/compromisso
+     */
+    if (!appointment.cancelable) {
+      return res.status(401).json({
+        error: 'This appointment cannot be canceled',
+      });
+    }
+
+    const dateWithSubHor = subHours(appointment.date, 2);
+
+    /**
      * checkSubHours: Verifica se o harário atual esta a menos de 2h do horário do agendamento
      * se sim, NÂO será possível realizar o cancelamento.
      */
-    const dateWithSubHor = subHours(appointment.date, 2);
-
     if (isBefore(dateWithSubHor, new Date())) {
       return res
         .status(401)
