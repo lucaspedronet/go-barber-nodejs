@@ -11,8 +11,6 @@ import User from '../models/User';
 import CancellationMail from '../jobs/CancellationMail';
 import Queue from '../../lib/Queue';
 
-import Mail from '../../lib/Mail';
-
 class AppointmentController {
   async index(req, res) {
     const { page } = req.query;
@@ -164,27 +162,17 @@ class AppointmentController {
     appointment.canceled_at = new Date();
     await appointment.save();
 
-    // await Queue.add(CancellationMail.key, { appointment });
-    await Mail.sendMail({
-      to: `${appointment.provider.name} <${appointment.provider.email}>`,
-      subject: `Agendamento Cancelado`,
-      template: 'cancellation',
-      context: {
-        provider: appointment.provider.name,
-        user: appointment.user.name,
-        date: format(
-          parseISO(appointment.date),
-          "'dia' dd 'de' MMMM', às' H:mm'h'",
-          {
-            locale: ptBR,
-          }
-        ),
-      },
-    });
+    /**
+     * Adiciona o jobs 'CancellationMail' a Fila passando appointment como dados a ser processados
+     */
+    await Queue.add(CancellationMail.key, { appointment });
 
-    return res
-      .status(200)
-      .json({ error: null, messager: 'success', data: appointment });
+    return res.json({
+      error: null,
+      messager: 'success',
+      data: appointment,
+      status: res.status(200),
+    });
   }
 }
 export default new AppointmentController();
