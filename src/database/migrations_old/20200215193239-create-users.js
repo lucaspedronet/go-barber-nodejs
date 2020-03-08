@@ -7,21 +7,9 @@ module.exports = {
         autoIncrement: true,
         primaryKey: true,
       },
-      document: {
-        type: Sequelize.STRING(11),
-        allowNull: false,
-        trim: true,
-        unique: true,
-      },
-      name: {
+      username: {
         type: Sequelize.STRING(128),
         allowNull: false,
-        trim: true,
-      },
-      email: {
-        type: Sequelize.STRING(255),
-        allowNull: false,
-        unique: true,
         trim: true,
       },
       password_hash: {
@@ -30,6 +18,11 @@ module.exports = {
         unique: true,
       },
       provider: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
+      active: {
         type: Sequelize.BOOLEAN,
         defaultValue: false,
         allowNull: false,

@@ -13,7 +13,7 @@ module.exports = {
         trim: true,
         unique: true,
       },
-      firts_name: {
+      firt_name: {
         type: Sequelize.STRING(20),
         allowNull: false,
         trim: true,
@@ -26,7 +26,10 @@ module.exports = {
       email: {
         type: Sequelize.STRING(255),
         allowNull: false,
-        unique: true,
+        unique: {
+          name: 'customers',
+          msg: 'Ops, infelizmente esse email já foi cadastrado...',
+        },
         trim: true,
       },
       phone: {

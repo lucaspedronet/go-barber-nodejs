@@ -6,9 +6,7 @@ class User extends Model {
   static init(sequelize) {
     super.init(
       {
-        document: Sequelize.STRING,
-        name: Sequelize.STRING,
-        email: Sequelize.STRING,
+        username: Sequelize.STRING,
         password: Sequelize.VIRTUAL,
         password_hash: Sequelize.STRING,
         provider: Sequelize.BOOLEAN,
@@ -26,12 +24,6 @@ class User extends Model {
     });
 
     return this;
-  }
-
-  static associate(models) {
-    // Model de User possui um campo 'avatar_id' que faz referência ao models File
-    // O campo 'avatar_id' da tabela users é uma foreignKey pra coluna 'id' da tabela files.
-    this.belongsTo(models.File, { foreignKey: 'avatar_id', as: 'avatar' });
   }
 
   checkPassword(password) {

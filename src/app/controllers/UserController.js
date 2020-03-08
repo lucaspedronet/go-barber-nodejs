@@ -6,8 +6,8 @@ class UserController {
     const users = await User.findAll();
 
     const newUsers = users.map(user => {
-      const { id, name, email, provider } = user;
-      return { id, name, email, provider };
+      const { id, username, provider, active } = user;
+      return { id, username, provider, active };
     });
 
     return res.json(newUsers);
@@ -16,9 +16,6 @@ class UserController {
   async store(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string().required(),
-      email: Yup.string()
-        .email()
-        .required(),
       password: Yup.string()
         .required()
         .min(6),
@@ -31,15 +28,15 @@ class UserController {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
-    const userExist = await User.findOne({ where: { email: req.body.email } });
+    // const userExist = await User.findOne({ where: { email: req.body.email } });
 
-    if (userExist) {
-      return res.status(400).json({ error: 'User already exist.' });
-    }
+    // if (userExist) {
+    //   return res.status(400).json({ error: 'User already exist.' });
+    // }
 
-    const { id, name, email, provider, active } = await User.create(req.body);
+    const { id, firtName, provider, active } = await User.create(req.body);
 
-    return res.json({ id, name, email, provider, active });
+    return res.json({ id, firtName, provider, active });
   }
 
   async update(req, res) {
