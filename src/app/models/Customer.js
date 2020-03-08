@@ -9,6 +9,7 @@ class Customer extends Model {
         last_name: Sequelize.STRING,
         email: Sequelize.STRING,
         phone: Sequelize.STRING,
+        user_id: Sequelize.STRING,
       },
       {
         sequelize,

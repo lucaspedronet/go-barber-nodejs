@@ -1,5 +1,6 @@
 import * as Yup from 'yup';
 import User from '../models/User';
+// import Customer from '../models/Customer';
 
 class UserController {
   async index(req, res) {
@@ -15,7 +16,10 @@ class UserController {
 
   async store(req, res) {
     const schema = Yup.object().shape({
-      name: Yup.string().required(),
+      username: Yup.string().required(),
+      // email: Yup.string()
+      //   .email()
+      //   .required(),
       password: Yup.string()
         .required()
         .min(6),
@@ -28,15 +32,17 @@ class UserController {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
-    // const userExist = await User.findOne({ where: { email: req.body.email } });
+    const userExist = await User.findOne({
+      where: { username: req.body.username },
+    });
 
-    // if (userExist) {
-    //   return res.status(400).json({ error: 'User already exist.' });
-    // }
+    if (userExist) {
+      return res.status(400).json({ error: 'User already exist.' });
+    }
 
-    const { id, firtName, provider, active } = await User.create(req.body);
+    const { id, username, provider, active } = await User.create(req.body);
 
-    return res.json({ id, firtName, provider, active });
+    return res.json({ id, username, provider, active });
   }
 
   async update(req, res) {

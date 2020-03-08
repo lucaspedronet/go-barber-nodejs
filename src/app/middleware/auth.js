@@ -29,13 +29,18 @@ export default async (req, res, next) => {
      * esta realizando uma verificação/comparação entre *token* e *authConfug.secret*. Caso NÃO seja iguis
      * (token, authConfug.secret) irá cair diretamente para o cath.
      */
-    const decoded = await promisify(jwt.verify)(token, authConfig.secret);
+    const { id, username, provider, active } = await promisify(jwt.verify)(
+      token,
+      authConfig.secret
+    );
     /**
      * @variation req.userId uma nova variável criada em tempo de execução, que vai
      * armazenar o id do usuário dentro de *req* = *req.userId*
      */
-    req.userId = decoded.id;
-    req.userName = decoded.name;
+    req.userId = id;
+    req.userName = username;
+    req.isProvider = provider;
+    req.isActive = active;
 
     return next();
   } catch (error) {

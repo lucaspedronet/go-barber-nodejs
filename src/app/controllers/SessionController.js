@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import User from '../models/User';
 
 import authConfig from '../../config/auth';
+import Customer from '../models/Customer';
 
 class SessionController {
   async store(req, res) {
@@ -14,6 +15,9 @@ class SessionController {
       email: Yup.string()
         .email()
         .required(),
+      username: Yup.string()
+        .min(5)
+        .max(15),
       password: Yup.string().required(),
     });
 
@@ -26,14 +30,16 @@ class SessionController {
 
     const { email, password } = req.body;
 
-    const user = await User.findOne({ where: { email } });
+    const customerExist = await Customer.findOne({ where: { email } });
 
     /**
-     * @param user: verifica se existe algum usuário, caso contrário 'User not found'
+     * @param customerExist: verifica se existe algum usuário, caso contrário 'Customer not found'
      */
-    if (!user) {
-      return res.status(401).json({ error: 'User not found.' });
+    if (!customerExist) {
+      return res.status(401).json({ error: 'Customer not found.' });
     }
+
+    const user = await User.findByPk(customerExist.user_id);
 
     /**
      * @param active: verifica se user esta Ativo ou Inativo, se inativo 'User not active.'
@@ -49,13 +55,15 @@ class SessionController {
       return res.status(401).json({ errpr: 'Password not match.' });
     }
 
-    const { id, name } = user;
+    const { id, username, provider, active } = user;
     return res.json({
-      user: { id, name },
+      user: { id, username },
       token: jwt.sign(
         {
           id,
-          name,
+          username,
+          provider,
+          active,
         },
         authConfig.secret,
         { expiresIn: authConfig.expiresIn }
