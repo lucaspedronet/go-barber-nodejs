@@ -23,6 +23,7 @@ class Customer extends Model {
     // Model de Customer possui um campo 'avatar_id' que faz referência ao models File
     // O campo 'avatar_id' da tabela Customers é uma foreignKey pra coluna 'id' da tabela files.
     this.belongsTo(models.File, { foreignKey: 'avatar_id', as: 'avatar' });
+    this.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
   }
 }
 

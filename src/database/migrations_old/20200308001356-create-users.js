@@ -8,14 +8,25 @@ module.exports = {
         primaryKey: true,
       },
       username: {
-        type: Sequelize.STRING(128),
+        type: Sequelize.STRING(15),
         allowNull: false,
+        unique: true,
+        trim: true,
+      },
+      email: {
+        type: Sequelize.STRING(255),
+        allowNull: false,
+        unique: true,
         trim: true,
       },
       password_hash: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(255),
         allowNull: false,
         unique: true,
+      },
+      cell_phone: {
+        type: Sequelize.STRING(12),
+        allowNull: false,
       },
       provider: {
         type: Sequelize.BOOLEAN,
@@ -25,6 +36,13 @@ module.exports = {
       active: {
         type: Sequelize.BOOLEAN,
         defaultValue: false,
+        allowNull: false,
+      },
+      customer_id: {
+        type: Sequelize.INTEGER,
+        references: { model: 'customers', key: 'id' },
+        onUpdate: 'CASCADE',
+        onDeleted: 'CASCADE',
         allowNull: false,
       },
       created_at: {

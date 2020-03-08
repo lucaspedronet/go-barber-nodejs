@@ -26,6 +26,13 @@ class User extends Model {
     return this;
   }
 
+  static associate(models) {
+    this.belongsTo(models.Customer, {
+      foreignKey: 'customer_id',
+      as: 'customer',
+    });
+  }
+
   checkPassword(password) {
     return bcript.compare(password, this.password_hash);
   }

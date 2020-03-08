@@ -4,7 +4,6 @@ import * as Yup from 'yup';
 import User from '../models/User';
 
 import authConfig from '../../config/auth';
-import Customer from '../models/Customer';
 
 class SessionController {
   async store(req, res) {
@@ -12,9 +11,9 @@ class SessionController {
      * @constant schema de validação
      */
     const schema = Yup.object().shape({
-      email: Yup.string()
-        .email()
-        .required(),
+      // email: Yup.string()
+      //   .email()
+      //   .required(),
       username: Yup.string()
         .min(5)
         .max(15),
@@ -28,34 +27,32 @@ class SessionController {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
-    const customerExist = await Customer.findOne({ where: { email } });
+    const userExists = await User.findOne({ where: { username } });
 
     /**
-     * @param customerExist: verifica se existe algum usuário, caso contrário 'Customer not found'
+     * @param userExists: verifica se existe algum usuário, caso contrário 'Customer not found'
      */
-    if (!customerExist) {
+    if (!userExists) {
       return res.status(401).json({ error: 'Customer not found.' });
     }
-
-    const user = await User.findByPk(customerExist.user_id);
 
     /**
      * @param active: verifica se user esta Ativo ou Inativo, se inativo 'User not active.'
      */
-    if (!user.active) {
+    if (!userExists.active) {
       return res.status(401).json({ error: 'User not active.' });
     }
 
     /**
      * @function checkPassword()
      */
-    if (!(await user.checkPassword(password))) {
+    if (!(await userExists.checkPassword(password))) {
       return res.status(401).json({ errpr: 'Password not match.' });
     }
 
-    const { id, username, provider, active } = user;
+    const { id, provider, active } = userExists;
     return res.json({
       user: { id, username },
       token: jwt.sign(
