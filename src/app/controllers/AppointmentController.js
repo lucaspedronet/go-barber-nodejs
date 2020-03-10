@@ -7,6 +7,8 @@ import Notification from '../schemas/Notification';
 import Appointment from '../models/Appointment';
 import File from '../models/File';
 import User from '../models/User';
+import Provider from '../models/Provider';
+import Customer from '../models/Customer';
 
 import CancellationMail from '../jobs/CancellationMail';
 import Queue from '../../lib/Queue';
@@ -51,10 +53,11 @@ class AppointmentController {
     }
 
     const { provider_id, date } = req.body;
+
     let checkProvider;
     try {
-      checkProvider = await User.findOne({
-        where: { id: provider_id, provider: true },
+      checkProvider = await Provider.findOne({
+        where: { id: provider_id },
       });
     } catch (error) {
       return res
@@ -68,7 +71,9 @@ class AppointmentController {
         .json({ error: 'You can only create appointment with provider' });
     }
 
-    if (req.userId === provider_id) {
+    const customer = await Customer.findOne({ where: { user_id: req.userId } });
+
+    if (customer.id === provider_id) {
       return res
         .status(400)
         .json({ error: 'Im not possible agender is provider' });
@@ -99,9 +104,13 @@ class AppointmentController {
     }
 
     const appointment = await Appointment.create({
-      user_id: req.userId,
+      user_id: customer.id,
       provider_id,
       date: hourStart,
+      service_name: 'Barba Desenhada',
+      service_category: 'Barbar',
+      price: 45,
+      description: 'Barba desenhada com qualidade!',
     });
 
     /**
@@ -112,8 +121,8 @@ class AppointmentController {
     });
 
     Notification.create({
-      content: `Novo agendamento de ${req.userName} para o ${formatter}`,
-      user: req.userId,
+      content: `Novo agendamento de ${customer.name} para o ${formatter}`,
+      user: customer.id,
     });
 
     return res.status(201).json(appointment);

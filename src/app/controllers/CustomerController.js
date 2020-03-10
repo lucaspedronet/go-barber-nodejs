@@ -1,7 +1,19 @@
 import Customer from '../models/Customer';
+import User from '../models/User';
 
 class CustomerController {
   async store(req, res) {
+    const { username, name, email, phone, password } = req.body;
+    const userExist = await User.findOne({
+      where: { username: req.bode.username },
+    });
+
+    if (userExist) {
+      return res.status(401).json({
+        message: 'Username is allready in use',
+      });
+    }
+
     let emailExists;
     try {
       emailExists = await Customer.findOne({
@@ -19,31 +31,19 @@ class CustomerController {
         .json({ message: 'Email is already in use', error: null });
     }
 
-    let documentExists;
-    try {
-      documentExists = await Customer.findOne({
-        where: { document: req.body.document },
-      });
-    } catch (error) {
-      return res
-        .status(500)
-        .json({ message: 'Server internal error', error, data: null });
-    }
+    const { id } = await User.create(req.body);
 
-    if (documentExists) {
-      return res
-        .status(400)
-        .json({ message: 'Document is already in use', error: null });
-    }
-
-    const { firt_name, last_name, email, phone } = await Customer.create(
-      req.body
-    );
+    const customer = await Customer.create({
+      name,
+      email,
+      phone,
+      user_id: id,
+    });
 
     return res.status(201).json({
       message: 'Customer successfully created',
       error: null,
-      data: { firt_name, last_name, email, phone },
+      data: customer,
     });
   }
 }

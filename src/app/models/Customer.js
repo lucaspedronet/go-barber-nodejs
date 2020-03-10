@@ -5,11 +5,10 @@ class Customer extends Model {
     super.init(
       {
         document: Sequelize.STRING,
-        firt_name: Sequelize.STRING,
-        last_name: Sequelize.STRING,
+        name: Sequelize.STRING,
         email: Sequelize.STRING,
         phone: Sequelize.STRING,
-        user_id: Sequelize.STRING,
+        user_id: Sequelize.INTEGER,
       },
       {
         sequelize,

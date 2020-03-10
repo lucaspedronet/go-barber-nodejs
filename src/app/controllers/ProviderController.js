@@ -1,5 +1,6 @@
 import User from '../models/User';
 import File from '../models/File';
+import Provider from '../models/Provider';
 
 class ProviderController {
   async store(req, res) {
@@ -7,9 +8,8 @@ class ProviderController {
      * @property atributes: Nos permiter retornar apenas os atributos que desejarmos de uma tabela
      * @property include: Nos permite add uma tabela em consultas de outras tabelas
      */
-    const providers = await User.findAll({
-      where: { provider: true },
-      attributes: ['id', 'name', 'email', 'provider', 'avatar_id'],
+    const providers = await Provider.findAll({
+      attributes: ['id', 'name', 'email', 'avatar_id'],
       include: {
         model: File,
         as: 'avatar',
