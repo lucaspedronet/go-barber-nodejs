@@ -6,12 +6,12 @@ import mongoose from 'mongoose';
 import User from '../app/models/User';
 import File from '../app/models/File';
 import Appointment from '../app/models/Appointment';
-import Customer from '../app/models/Customer';
-import Provider from '../app/models/Provider';
+import ShippingAddress from '../app/models/ShippingAddress';
+import Profile from '../app/models/Profile';
 
 import databaseConfig from '../config/database';
 
-const models = [User, File, Appointment, Customer, Provider];
+const models = [User, File, Appointment, Profile, ShippingAddress];
 
 class DataBase {
   constructor() {

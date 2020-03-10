@@ -16,7 +16,7 @@ module.exports = {
        */
       user_id: {
         type: Sequelize.INTEGER,
-        references: { model: 'profiles', key: 'id' },
+        references: { model: 'users', key: 'id' },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
         allowNull: true,
@@ -27,7 +27,7 @@ module.exports = {
        */
       provider_id: {
         type: Sequelize.INTEGER,
-        references: { model: 'profiles', key: 'id' },
+        references: { model: 'users', key: 'id' },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
         allowNull: true,
