@@ -10,7 +10,7 @@ class User extends Model {
         email: Sequelize.STRING,
         password: Sequelize.VIRTUAL,
         password_hash: Sequelize.STRING,
-        profiles: Sequelize.ENUM,
+        profile: Sequelize.ENUM('customer', 'provider', 'manager'),
         active: Sequelize.BOOLEAN,
       },
       {
@@ -25,6 +25,13 @@ class User extends Model {
     });
 
     return this;
+  }
+
+  static associate(models) {
+    this.belongsTo(models.Profile, {
+      foreignKey: 'profile_id',
+      as: 'profiles',
+    });
   }
 
   checkPassword(password) {

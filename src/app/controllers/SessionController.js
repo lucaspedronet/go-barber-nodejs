@@ -11,12 +11,12 @@ class SessionController {
      * @constant schema de validação
      */
     const schema = Yup.object().shape({
-      // email: Yup.string()
-      //   .email()
-      //   .required(),
-      username: Yup.string()
-        .min(5)
-        .max(15),
+      email: Yup.string()
+        .email()
+        .required(),
+      // username: Yup.string()
+      //   .min(5)
+      //   .max(30),
       password: Yup.string().required(),
     });
 
@@ -27,22 +27,22 @@ class SessionController {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
-    const { username, password } = req.body;
+    const { password, email } = req.body;
 
-    const userExists = await User.findOne({ where: { username } });
+    const userExists = await User.findOne({ where: { email } });
 
     /**
-     * @param userExists: verifica se existe algum usuário, caso contrário 'Customer not found'
+     * @param userExists: verifica se existe algum usuário, caso contrário 'User not found'
      */
     if (!userExists) {
-      return res.status(401).json({ error: 'Customer not found.' });
+      return res.status(401).json({ error: 'User not found.' });
     }
 
     /**
      * @param active: verifica se user esta Ativo ou Inativo, se inativo 'User not active.'
      */
     if (!userExists.active) {
-      return res.status(401).json({ error: 'User not active.' });
+      return res.status(401).json({ error: 'User not permissio is active.' });
     }
 
     /**
@@ -52,15 +52,13 @@ class SessionController {
       return res.status(401).json({ errpr: 'Password not match.' });
     }
 
-    const { id, provider, active } = userExists;
+    const { id, profile } = userExists;
     return res.json({
-      user: { id, username },
+      user: { id, email },
       token: jwt.sign(
         {
           id,
-          username,
-          provider,
-          active,
+          profile,
         },
         authConfig.secret,
         { expiresIn: authConfig.expiresIn }

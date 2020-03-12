@@ -1,9 +1,9 @@
-import Customer from '../models/Customer';
+import Profile from '../models/Profile';
 import User from '../models/User';
 
 class CustomerController {
   async store(req, res) {
-    const { username, name, email, phone, password } = req.body;
+    const { name, email, phone } = req.body;
     const userExist = await User.findOne({
       where: { username: req.bode.username },
     });
@@ -16,7 +16,7 @@ class CustomerController {
 
     let emailExists;
     try {
-      emailExists = await Customer.findOne({
+      emailExists = await Profile.findOne({
         where: { email: req.body.email },
       });
     } catch (error) {
@@ -33,7 +33,7 @@ class CustomerController {
 
     const { id } = await User.create(req.body);
 
-    const customer = await Customer.create({
+    const customer = await Profile.create({
       name,
       email,
       phone,
@@ -41,7 +41,7 @@ class CustomerController {
     });
 
     return res.status(201).json({
-      message: 'Customer successfully created',
+      message: 'Profile successfully created',
       error: null,
       data: customer,
     });

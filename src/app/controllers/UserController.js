@@ -1,8 +1,7 @@
 import * as Yup from 'yup';
 import User from '../models/User';
-import Customer from '../models/Customer';
-import Provider from '../models/Provider';
-// import Customer from '../models/Customer';
+import Profile from '../models/Profile';
+// import Profile from '../models/Profile';
 
 class UserController {
   async index(req, res) {
@@ -18,7 +17,9 @@ class UserController {
 
   async store(req, res) {
     const schema = Yup.object().shape({
-      username: Yup.string().required(),
+      username: Yup.string()
+        .min(5)
+        .max(20),
       email: Yup.string()
         .email()
         .required(),
@@ -34,52 +35,98 @@ class UserController {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
-    const { username, name, phone, email } = req.body;
+    const { name, phone, email } = req.body;
 
     /**
-     *
-     * @param {valor} len: número de caracteres
+     * @param {valor} len: número de caracteres and decoded for username
      */
     const usernameFort = len => {
-      let usernameAleatory = '';
+      let decodedKey = '';
       do {
-        usernameAleatory = Math.random()
+        decodedKey = Math.random()
           .toString(36)
           .substr(2);
-      } while (usernameAleatory.length < len);
-      usernameAleatory = usernameAleatory.substr(0, len);
-      return usernameAleatory;
+      } while (decodedKey.length < len);
+      decodedKey = decodedKey.substr(0, len);
+      return decodedKey;
     };
 
-    req.body.username = `${name}-${usernameFort(10)}`;
+    /**
+     * @template username: personalizando username
+     */
+    const [decoded] = name.split(' ');
+    req.body.username = `${decoded}-${usernameFort(10)}-${usernameFort(5)}`;
 
-    const userExist = await User.findOne({
-      where: { username: req.body.username },
-    });
-
-    if (userExist) {
-      return res.status(400).json({ error: 'User already exist.' });
-    }
-
-    const { id, provider, active } = await User.create(req.body);
-
-    const customerExists = await Customer.findOne({ where: { user_id: id } });
-
-    if (customerExists) {
-      return res.status(400).json({ error: 'Customer already exist' });
-    }
-
-    if (!provider) {
-      await Customer.create({
-        name,
-        phone,
-        user_id: id,
-        email,
+    let emailExist;
+    try {
+      emailExist = await User.findOne({
+        where: { email: req.body.email },
       });
-      return res.json({ id, username, email, provider, active });
+
+      if (emailExist) {
+        return res.status(400).json({ error: 'Email already exist.' });
+      }
+    } catch (error) {
+      return res.status(500).json({
+        message: 'internal server error',
+        success: false,
+        data: null,
+        error: error.message,
+      });
     }
-    await Provider.create({ name, phone, email, user_id: id });
-    return res.json({ id, username, email, provider, active });
+
+    const { id, active, username, profile } = await User.create(req.body);
+
+    /**
+     * @query : Verifica se existe algum Profile com mesmo User.id
+     */
+    const profileExists = await Profile.findOne({ where: { user_id: id } });
+
+    if (profileExists) {
+      return res.status(400).json({ error: 'Profile already exist' });
+    }
+
+    if (profile === 'provider') {
+      req.body.user_id = id;
+      const provider = await Profile.create(req.body);
+      return res.json({
+        id,
+        active,
+        profile,
+        username,
+        email,
+        phone,
+        provider: provider.id,
+        address: provider.shipping_address_id,
+      });
+    }
+
+    if (profile === 'manager') {
+      req.body.user_id = id;
+      const manager = await Profile.create(req.body);
+      return res.json({
+        id,
+        active,
+        profile,
+        username,
+        email,
+        phone,
+        manager: manager.id,
+        address: manager.shipping_address_id,
+      });
+    }
+    req.body.user_id = id;
+    const customer = await Profile.create(req.body);
+    return res.json({
+      id,
+      active,
+      profile,
+      username,
+      email,
+      phone,
+      customer: customer.id,
+      address: customer.shipping_address_id,
+    });
   }
 
   async update(req, res) {
