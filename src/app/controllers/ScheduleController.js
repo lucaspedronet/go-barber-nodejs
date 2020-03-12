@@ -8,7 +8,7 @@ class ScheduleController {
   async index(req, res) {
     const { date } = req.query;
     const checkUser = await User.findOne({
-      where: { id: req.userId, provider: true },
+      where: { id: req.userId, profile: 'provider' },
     });
 
     if (!checkUser) {
@@ -32,6 +32,14 @@ class ScheduleController {
         },
       },
       order: ['date'],
+      // attributes: [
+      //   'date',
+      //   'user',
+      //   'provider',
+      //   'service_provider_id',
+      //   'created_at',
+      //   'updated',
+      // ],
     });
 
     if (!appointments) {

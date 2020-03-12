@@ -8,19 +8,22 @@ class ProviderController {
      * @property atributes: Nos permiter retornar apenas os atributos que desejarmos de uma tabela
      * @property include: Nos permite add uma tabela em consultas de outras tabelas
      */
-    const providers = await Profile.findAll({
-      attributes: ['id', 'name', 'email', 'avatar_id', 'user_id'],
+    const providers = await User.findAll({
+      where: { profile: 'provider' },
+      attributes: ['id', 'username', 'profile', 'active'],
       order: ['created_at'],
       include: [
         {
-          model: User,
-          as: 'user',
-          attributes: ['username', 'profile', 'active'],
-        },
-        {
-          model: File,
-          as: 'avatar',
-          attributes: ['id', 'name', 'path', 'url'],
+          model: Profile,
+          as: 'profiles',
+          attributes: ['id', 'name', 'email', 'avatar_id', 'user_id'],
+          include: [
+            {
+              model: File,
+              as: 'avatar',
+              attributes: ['id', 'name', 'path', 'url'],
+            },
+          ],
         },
       ],
     });

@@ -8,7 +8,8 @@ import ProviderController from './app/controllers/ProviderController';
 import AppointmentController from './app/controllers/AppointmentController';
 import ScheduleController from './app/controllers/ScheduleController';
 import NotificationController from './app/controllers/NotificationController';
-import CustomerController from './app/controllers/CustomerController';
+import AvaliableController from './app/controllers/AvaliableController';
+import ServiceController from './app/controllers/ServiceController';
 
 import authMiddlware from './app/middleware/auth';
 import multerConfig from './config/multer';
@@ -19,30 +20,39 @@ const routes = new Router();
  */
 const upload = multer(multerConfig);
 
-routes.post('/sessions', SessionController.store);
+routes.post('/v1/sessions', SessionController.store);
 /**
  * @rotas users
  */
-routes.get('/users', UserController.index);
-routes.post('/users', UserController.store);
-routes.post('/customers', CustomerController.store);
+routes.get('/v1/users', UserController.index);
+routes.post('/v1/users', UserController.store);
 
 routes.use(authMiddlware);
-routes.put('/users', UserController.update);
-routes.get('/providers', ProviderController.store);
-
-routes.get('/appointments', AppointmentController.index);
-routes.post('/appointments', AppointmentController.store);
-routes.delete('/appointments/:id', AppointmentController.delete);
-
-routes.get('/schedule', ScheduleController.index);
-
-routes.get('/notifications', NotificationController.index);
-routes.put('/notifications/:id', NotificationController.update);
+routes.put('/v1/users', UserController.update);
+routes.get('/v1/providers', ProviderController.store);
+routes.get('/v1/providers/:providerId/available', AvaliableController.store);
+/**
+ * @access /v1/appointments
+ */
+routes.get('/v1/appointments', AppointmentController.index);
+routes.post('/v1/appointments', AppointmentController.store);
+routes.delete('/v1/appointments/:id', AppointmentController.delete);
+/**
+ * @access /v1/schedule
+ */
+routes.get('/v1/schedule', ScheduleController.index);
+/**
+ * @access /v1/notifications
+ */
+routes.get('/v1/notifications', NotificationController.index);
+routes.put('/v1/notifications/:id', NotificationController.update);
 
 /**
  * @requires upload.sigle('file') nos diz que apenas um único arquivo será upado por requisição e não vários
  */
-routes.post('/files', upload.single('file'), FileController.store);
+routes.post('/v1/files', upload.single('file'), FileController.store);
+
+routes.post('/v1/services', ServiceController.store);
+routes.get('/v1/services', ServiceController.index);
 
 export default routes;

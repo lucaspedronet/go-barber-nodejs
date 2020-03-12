@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('service_price_provider', {
+    return queryInterface.createTable('services_price_providers', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -9,16 +9,15 @@ module.exports = {
       },
       price_base: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        defaultValue: 10,
+        trim: true,
+      },
+      service_time: {
+        type: Sequelize.INTEGER,
+        trim: true,
       },
       professional_assessment: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        defaultValue: 0,
-      },
-      procedure_time: {
-        type: Sequelize.DATE,
+        trim: true,
       },
       service_id: {
         type: Sequelize.INTEGER,
@@ -50,6 +49,6 @@ module.exports = {
   },
 
   down: queryInterface => {
-    return queryInterface.dropTable('service_price_provider');
+    return queryInterface.dropTable('services_price_providers');
   },
 };

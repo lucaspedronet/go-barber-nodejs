@@ -8,10 +8,20 @@ import File from '../app/models/File';
 import Appointment from '../app/models/Appointment';
 import ShippingAddress from '../app/models/ShippingAddress';
 import Profile from '../app/models/Profile';
+import ServicePrice from '../app/models/ServicePrice';
+import Service from '../app/models/Service';
 
 import databaseConfig from '../config/database';
 
-const models = [User, File, Appointment, Profile, ShippingAddress];
+const models = [
+  ShippingAddress,
+  ServicePrice,
+  Appointment,
+  Service,
+  Profile,
+  File,
+  User,
+];
 
 class DataBase {
   constructor() {

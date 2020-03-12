@@ -17,18 +17,16 @@ module.exports = {
       },
       category: {
         type: Sequelize.ENUM(
-          'Salão de Beleza',
-          'Barbearia',
-          'Clínica de Estética',
-          'Esmalteria',
-          'Centro de Depilação',
-          'SPA',
-          'Loja de Cosméticos',
-          'Maquiadora',
-          'Espaço de Beleza',
-          'Podologia'
+          'Barba',
+          'Cabelo',
+          'Maquiagem',
+          'Sombrancelha',
+          'Estética corpora',
+          'Estética facial',
+          'Depilação',
+          'Massagem',
+          'Podologo'
         ),
-        defaultValue: 'Salão de Beleza',
       },
       image_id: {
         type: Sequelize.INTEGER,
