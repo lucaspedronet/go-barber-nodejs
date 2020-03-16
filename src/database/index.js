@@ -38,10 +38,10 @@ class DataBase {
   }
 
   mongo() {
-    this.mongoConnection = mongoose.connect(
-      'mongodb://lucaspedro:lucas015@ds058548.mlab.com:58548/mongobarber',
-      { useNewUrlParser: true, useFindAndModify: true }
-    );
+    this.mongoConnection = mongoose.connect(process.env.MONGO_URL, {
+      useNewUrlParser: true,
+      useFindAndModify: true,
+    });
   }
 }
 export default new DataBase();

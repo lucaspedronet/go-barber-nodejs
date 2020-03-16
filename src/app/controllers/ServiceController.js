@@ -1,5 +1,4 @@
 import Service from '../models/Service';
-import ServicePrice from '../models/ServicePrice';
 import File from '../models/File';
 
 class ServiceController {
@@ -24,19 +23,18 @@ class ServiceController {
       return res.status(400).json({ error: 'User not permission provider' });
     }
 
-    // const { title } = req.body;
-    // const serviceExists = await Service.findOne({ where: { title } });
+    const { title } = req.body;
+    const serviceExists = await Service.findOne({ where: { title } });
 
-    // if (serviceExists) {
-    //   return res.status(400).json({ error: 'Service in title exists' });
-    // }
+    if (serviceExists) {
+      return res.status(400).json({ error: 'Service in title exists' });
+    }
 
-    // const { id } = await Service.create(req.body);
-    // req.body.service_id = 3;
+    const { id, description, category, image_id } = await Service.create(
+      req.body
+    );
 
-    const service = await ServicePrice.create(req.body);
-
-    return res.status(200).json(service);
+    return res.status(200).json({ id, description, category, image_id });
   }
 }
 

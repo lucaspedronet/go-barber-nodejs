@@ -18,6 +18,7 @@ class Service extends Model {
           'Massagem',
           'Podologo'
         ),
+        image_id: Sequelize.INTEGER,
       },
       { sequelize }
     );

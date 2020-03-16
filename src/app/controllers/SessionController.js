@@ -52,9 +52,14 @@ class SessionController {
       return res.status(401).json({ errpr: 'Password not match.' });
     }
 
-    const { id, profile } = userExists;
+    const { id, profile, active, username } = userExists;
     return res.json({
-      user: { id, email },
+      user: {
+        id,
+        email,
+        active,
+        username,
+      },
       token: jwt.sign(
         {
           id,

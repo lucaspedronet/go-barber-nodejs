@@ -10,6 +10,7 @@ import ScheduleController from './app/controllers/ScheduleController';
 import NotificationController from './app/controllers/NotificationController';
 import AvaliableController from './app/controllers/AvaliableController';
 import ServiceController from './app/controllers/ServiceController';
+import ShippingAddressController from './app/controllers/ShippingAddressController';
 
 import authMiddlware from './app/middleware/auth';
 import multerConfig from './config/multer';
@@ -54,5 +55,7 @@ routes.post('/v1/files', upload.single('file'), FileController.store);
 
 routes.post('/v1/services', ServiceController.store);
 routes.get('/v1/services', ServiceController.index);
+
+routes.post('/v1/shipping/address', ShippingAddressController.store);
 
 export default routes;
