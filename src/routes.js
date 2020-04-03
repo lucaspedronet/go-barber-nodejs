@@ -42,6 +42,7 @@ routes.delete('/v1/appointments/:id', AppointmentController.delete);
  * @access /v1/schedule
  */
 routes.get('/v1/schedule', ScheduleController.index);
+routes.post('/v1/schedule', ScheduleController.store);
 /**
  * @access /v1/notifications
  */

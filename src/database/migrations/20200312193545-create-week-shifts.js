@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('week_shift_time', {
+    return queryInterface.createTable('week_shifts', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -11,7 +11,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: true,
         defaultValue: null,
-        references: { model: 'day_shift_time', key: 'id' },
+        references: { model: 'day_shifts', key: 'id' },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
       },
@@ -19,7 +19,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: true,
         defaultValue: null,
-        references: { model: 'day_shift_time', key: 'id' },
+        references: { model: 'day_shifts', key: 'id' },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
       },
@@ -27,7 +27,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: true,
         defaultValue: null,
-        references: { model: 'day_shift_time', key: 'id' },
+        references: { model: 'day_shifts', key: 'id' },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
       },
@@ -35,7 +35,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: true,
         defaultValue: null,
-        references: { model: 'day_shift_time', key: 'id' },
+        references: { model: 'day_shifts', key: 'id' },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
       },
@@ -43,7 +43,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: true,
         defaultValue: null,
-        references: { model: 'day_shift_time', key: 'id' },
+        references: { model: 'day_shifts', key: 'id' },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
       },
@@ -51,7 +51,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: true,
         defaultValue: null,
-        references: { model: 'day_shift_time', key: 'id' },
+        references: { model: 'day_shifts', key: 'id' },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
       },
@@ -59,7 +59,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: true,
         defaultValue: null,
-        references: { model: 'day_shift_time', key: 'id' },
+        references: { model: 'day_shifts', key: 'id' },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
       },
@@ -70,6 +70,10 @@ module.exports = {
         references: { model: 'profiles', key: 'id' },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
+      },
+      object: {
+        type: Sequelize.STRING,
+        defaultValue: 'week_shifts',
       },
       created_at: {
         // campos que irão armazena data/hora dos registros.
@@ -85,6 +89,6 @@ module.exports = {
   },
 
   down: queryInterface => {
-    return queryInterface.dropTable('week_shift_time');
+    return queryInterface.dropTable('week_shifts');
   },
 };

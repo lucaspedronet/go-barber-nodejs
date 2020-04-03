@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('day_shift_time', {
+    return queryInterface.createTable('day_shifts', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -31,6 +31,14 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: true,
       },
+      week_single: {
+        type: Sequelize.STRING(3),
+        allowNull: false,
+      },
+      object: {
+        type: Sequelize.STRING,
+        defaultValue: 'day_shifts',
+      },
       created_at: {
         // campos que irão armazena data/hora dos registros.
         type: Sequelize.DATE,
@@ -45,6 +53,6 @@ module.exports = {
   },
 
   down: queryInterface => {
-    return queryInterface.dropTable('day_shift_time');
+    return queryInterface.dropTable('day_shifts');
   },
 };

@@ -10,6 +10,8 @@ import ShippingAddress from '../app/models/ShippingAddress';
 import Profile from '../app/models/Profile';
 import ServicePrice from '../app/models/ServicePrice';
 import Service from '../app/models/Service';
+import WeekShift from '../app/models/WeekShift';
+import DayShift from '../app/models/DayShift';
 
 import databaseConfig from '../config/database';
 
@@ -17,6 +19,8 @@ const models = [
   ShippingAddress,
   ServicePrice,
   Appointment,
+  WeekShift,
+  DayShift,
   Service,
   Profile,
   File,

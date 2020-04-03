@@ -1,6 +1,7 @@
 import * as Yup from 'yup';
 import User from '../models/User';
 import Profile from '../models/Profile';
+import File from '../models/File';
 // import Profile from '../models/Profile';
 
 class UserController {
@@ -159,12 +160,32 @@ class UserController {
       return res.status(401).json({ error: 'Password does not match' });
     }
 
-    const { id, username, provider, active } = await user.update(req.body);
+    await user.update(req.body);
+
+    const { id, username, provider, active, profiles } = User.findByPk(
+      req.userId,
+      {
+        include: [
+          {
+            model: Profile,
+            as: 'profiles',
+            attributes: ['id', 'name', 'phone'],
+            include: [
+              {
+                model: File,
+                as: 'avatar',
+                attributes: ['id', 'path', 'url'],
+              },
+            ],
+          },
+        ],
+      }
+    );
 
     return res.json({
       message: 'User successfully changed',
       error: null,
-      data: { id, username, provider, active },
+      data: { id, username, provider, active, profiles },
     });
   }
 }

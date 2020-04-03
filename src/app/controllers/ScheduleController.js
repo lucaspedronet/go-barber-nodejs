@@ -1,8 +1,9 @@
-import { startOfDay, endOfDay, parseISO } from 'date-fns';
+import { startOfDay, endOfDay, parseISO, differenceInHours } from 'date-fns';
 import { Op } from 'sequelize';
 
 import Appointment from '../models/Appointment';
 import User from '../models/User';
+import Profile from '../models/Profile';
 
 class ScheduleController {
   async index(req, res) {
@@ -31,14 +32,26 @@ class ScheduleController {
           [Op.between]: [startOfDay(parsedDate), endOfDay(parsedDate)],
         },
       },
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'profile_id'],
+          include: [
+            {
+              model: Profile,
+              as: 'profiles',
+              attributes: ['name', 'phone'],
+            },
+          ],
+        },
+      ],
       order: ['date'],
       attributes: [
         'id',
         'past',
         'cancelable',
         'date',
-        'user_id',
-        'provider_id',
         'service_provider_id',
         'created_at',
         'updated_at',
@@ -51,6 +64,24 @@ class ScheduleController {
     }
 
     return res.status(200).json(appointments);
+  }
+
+  async store(req, res) {
+    const userExits = User.findByPk(req.userId);
+    if (!userExits) {
+      return res.status(401).json({ error: 'User already exists' });
+    }
+
+    if (req.isProfile !== 'provider') {
+      return res.status(401).json({ error: 'User not permission create hour' });
+    }
+
+    return res.status(200).json({
+      ok: differenceInHours(
+        new Date('2020-03-16T09:30:00-03:00'),
+        new Date('2020-03-16T06:00:00-03:00')
+      ),
+    });
   }
 }
 

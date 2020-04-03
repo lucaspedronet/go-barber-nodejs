@@ -2,8 +2,9 @@ import jwt from 'jsonwebtoken';
 import * as Yup from 'yup';
 
 import User from '../models/User';
-
+import File from '../models/File';
 import authConfig from '../../config/auth';
+import Profile from '../models/Profile';
 
 class SessionController {
   async store(req, res) {
@@ -29,7 +30,23 @@ class SessionController {
 
     const { password, email } = req.body;
 
-    const userExists = await User.findOne({ where: { email } });
+    const userExists = await User.findOne({
+      where: { email },
+      include: [
+        {
+          model: Profile,
+          as: 'profiles',
+          attributes: ['id', 'name', 'phone'],
+          include: [
+            {
+              model: File,
+              as: 'avatar',
+              attributes: ['id', 'path', 'url'],
+            },
+          ],
+        },
+      ],
+    });
 
     /**
      * @param userExists: verifica se existe algum usuário, caso contrário 'User not found'
@@ -51,14 +68,16 @@ class SessionController {
     if (!(await userExists.checkPassword(password))) {
       return res.status(401).json({ errpr: 'Password not match.' });
     }
+    const { id, profile, profiles, active, username } = userExists;
 
-    const { id, profile, active, username } = userExists;
     return res.json({
       user: {
         id,
         email,
         active,
+        profile,
         username,
+        profiles,
       },
       token: jwt.sign(
         {
