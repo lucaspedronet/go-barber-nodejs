@@ -2,6 +2,6 @@
 import app from './app';
 
 const port = 3001;
-app.listen(process.env.NODE_PORT || port, () => {
+app.listen(port, () => {
   console.log(`Server node start in --> ${port}`);
 });
