@@ -4,7 +4,7 @@ import Notification from '../schemas/Notification';
 class NotificationController {
   async index(req, res) {
     const checkIsProvider = await User.findOne({
-      where: { id: req.userId, provider: true },
+      where: { id: req.userId, profile: 'provider' },
     });
 
     if (!checkIsProvider) {
@@ -13,7 +13,9 @@ class NotificationController {
         .json({ error: 'Only provider can loand notification!' });
     }
 
-    const notifications = await Notification.find({ user: req.userId }).sort({
+    const notifications = await Notification.find({
+      provider: req.userId,
+    }).sort({
       createdAt: 'desc',
     });
     return res.json(notifications);

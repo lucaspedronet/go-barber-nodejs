@@ -65,6 +65,9 @@ class AppointmentController {
 
     const { provider_id, date } = req.body;
 
+    /**
+     * check is provider: verifica se existe algum provider com esse id: provider_id
+     */
     const checkProvider = await User.findOne({
       where: { id: provider_id, profile: 'provider' },
     });
@@ -75,6 +78,9 @@ class AppointmentController {
         .json({ error: 'You can only create appointment with provider' });
     }
 
+    /**
+     * check isProvider match: verificar se user signIn esta tentando realizar agendamento com ele mesmo!
+     */
     if (req.userId === provider_id) {
       return res
         .status(401)
@@ -101,6 +107,9 @@ class AppointmentController {
       },
     });
 
+    /**
+     * checkAvaliability: check is not appointment match.
+     */
     if (checkAvaliability) {
       return res.status(401).json({ error: 'Appointment is not available' });
     }
@@ -124,10 +133,13 @@ class AppointmentController {
     /**
      * @constructs Schema: Notification push para prestador
      */
-    Notification.create({
+    const notify = await Notification.create({
       content: `Novo agendamento de ${user.name} para o ${formatter}`,
       user: req.userId,
+      provider: provider_id,
     });
+
+    console.log(notify);
 
     /**
      * retorna appointment
