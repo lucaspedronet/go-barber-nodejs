@@ -25,10 +25,10 @@ routes.post('/v1/sessions', SessionController.store);
 /**
  * @rotas users
  */
-routes.get('/v1/users', UserController.index);
 routes.post('/v1/users', UserController.store);
 
 routes.use(authMiddlware);
+routes.get('/v1/users', UserController.index);
 routes.put('/v1/users', UserController.update);
 routes.get('/v1/providers', ProviderController.store);
 routes.get('/v1/providers/:providerId/available', AvaliableController.store);

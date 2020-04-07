@@ -6,14 +6,65 @@ import File from '../models/File';
 
 class UserController {
   async index(req, res) {
-    const users = await User.findAll();
+    console.log(req.isProfile);
+    if (req.isProfile !== 'provider') {
+      return res.status(401).json({
+        message: 'You do not have authorization, you are not a provider',
+        success: false,
+        error: 'ERROR',
+        data: null,
+      });
+    }
 
-    const newUsers = users.map(user => {
-      const { id, username, provider, active } = user;
-      return { id, username, provider, active };
+    const {
+      id,
+      username,
+      guid,
+      email,
+      profile,
+      active,
+      profile_id,
+      profiles,
+    } = await User.findByPk(req.userId, {
+      include: [
+        {
+          model: Profile,
+          as: 'profiles',
+          attributes: [
+            'id',
+            'name',
+            'phone',
+            'birth_date',
+            'user_id',
+            'avatar_id',
+            'shipping_address_id',
+          ],
+          include: [
+            {
+              model: File,
+              as: 'avatar',
+              attributes: ['id', 'path', 'url', 'name'],
+            },
+          ],
+        },
+      ],
     });
 
-    return res.json(newUsers);
+    return res.status(200).json({
+      message: 'Registration completed with success!',
+      success: true,
+      error: null,
+      data: {
+        id,
+        username,
+        guid,
+        email,
+        profile,
+        active,
+        profile_id,
+        profiles,
+      },
+    });
   }
 
   async store(req, res) {
@@ -155,10 +206,10 @@ class UserController {
     }
 
     if (req.body.phone && req.body.phone !== profile.phone) {
-      const phoneExist = await Profile.findOne({ profile: req.body.phone });
+      const phoneExist = await Profile.findOne({ phone: req.body.phone });
       if (phoneExist) {
         return res.status(401).json({
-          message: 'Already email exists!',
+          message: 'Already phone exists!',
           success: false,
           data: 'FAILURE',
           error: 'ERROR',
