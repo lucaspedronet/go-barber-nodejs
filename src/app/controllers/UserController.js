@@ -18,9 +18,23 @@ class UserController {
 
   async store(req, res) {
     const schema = Yup.object().shape({
+      profile: Yup.string().required(),
+      active: Yup.boolean().required(),
+      name: Yup.string()
+        .min(10)
+        .max(50)
+        .required('Nome é obrigatório!'),
+      guid: Yup.string()
+        .min(10)
+        .max(50)
+        .required(),
+      phone: Yup.string()
+        .min(9)
+        .max(15)
+        .required(),
       username: Yup.string()
         .min(5)
-        .max(20),
+        .max(50),
       email: Yup.string()
         .email()
         .required(),
@@ -28,15 +42,6 @@ class UserController {
         .required()
         .min(6),
     });
-
-    /**
-     * @Verifica se os parametros de req.body atende o schema
-     */
-    if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Validation fails' });
-    }
-
-    const { name, phone, email } = req.body;
 
     /**
      * @param {valor} len: número de caracteres and decoded for username
@@ -53,10 +58,18 @@ class UserController {
     };
 
     /**
-     * @template username: personalizando username
+     * @template username: personalizando username e guid
      */
-    const [decoded] = name.split(' ');
-    req.body.username = `${decoded}-${usernameFort(10)}-${usernameFort(5)}`;
+    const [decoded] = req.body.name.split(' ');
+    req.body.username = `${decoded}-${usernameFort(8)}-${usernameFort(8)}`;
+    req.body.guid = `${usernameFort(8)}.${usernameFort(8)}.${usernameFort(15)}`;
+
+    /**
+     * @Verifica se os parametros de req.body atende o schema
+     */
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation fails' });
+    }
 
     let emailExist;
     try {
@@ -76,57 +89,16 @@ class UserController {
       });
     }
 
-    const { id, active, username, profile } = await User.create(req.body);
+    const { id } = await User.create(req.body);
 
-    /**
-     * @query : Verifica se existe algum Profile com mesmo User.id
-     */
-    const profileExists = await Profile.findOne({ where: { user_id: id } });
-
-    if (profileExists) {
-      return res.status(400).json({ error: 'Profile already exist' });
-    }
-
-    if (profile === 'provider') {
-      req.body.user_id = id;
-      const provider = await Profile.create(req.body);
-      return res.json({
-        id,
-        active,
-        profile,
-        username,
-        email,
-        phone,
-        provider: provider.id,
-        address: provider.shipping_address_id,
-      });
-    }
-
-    if (profile === 'manager') {
-      req.body.user_id = id;
-      const manager = await Profile.create(req.body);
-      return res.json({
-        id,
-        active,
-        profile,
-        username,
-        email,
-        phone,
-        manager: manager.id,
-        address: manager.shipping_address_id,
-      });
-    }
     req.body.user_id = id;
-    const customer = await Profile.create(req.body);
-    return res.json({
-      id,
-      active,
-      profile,
-      username,
-      email,
-      phone,
-      customer: customer.id,
-      address: customer.shipping_address_id,
+    await Profile.create(req.body);
+
+    return res.status(500).json({
+      message: 'Registration completed with success!',
+      success: true,
+      data: 'success',
+      error: null,
     });
   }
 

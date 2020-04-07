@@ -7,6 +7,7 @@ class User extends Model {
     super.init(
       {
         username: Sequelize.STRING,
+        guid: Sequelize.STRING,
         email: Sequelize.STRING,
         password: Sequelize.VIRTUAL,
         password_hash: Sequelize.STRING,
