@@ -6,16 +6,6 @@ import File from '../models/File';
 
 class UserController {
   async index(req, res) {
-    console.log(req.isProfile);
-    if (req.isProfile !== 'provider') {
-      return res.status(401).json({
-        message: 'You do not have authorization, you are not a provider',
-        success: false,
-        error: 'ERROR',
-        data: null,
-      });
-    }
-
     const {
       id,
       username,
@@ -23,7 +13,6 @@ class UserController {
       email,
       profile,
       active,
-      profile_id,
       profiles,
     } = await User.findByPk(req.userId, {
       include: [
@@ -50,6 +39,42 @@ class UserController {
       ],
     });
 
+    if (profiles === null) {
+      const {
+        name,
+        phone,
+        user_id,
+        avata_id,
+        birth_date,
+        shipping_address_id,
+      } = await Profile.findOne({ where: { user_id: id } });
+
+      return res.status(200).json({
+        message: 'Registration completed with success!',
+        success: true,
+        error: null,
+        data: [
+          {
+            id,
+            guid,
+            email,
+            active,
+            profile,
+            username,
+            profiles: {
+              name,
+              phone,
+              user_id,
+              avata_id,
+              birth_date,
+              shipping_address_id,
+              avatar: null,
+            },
+          },
+        ],
+      });
+    }
+
     return res.status(200).json({
       message: 'Registration completed with success!',
       success: true,
@@ -61,7 +86,6 @@ class UserController {
         email,
         profile,
         active,
-        profile_id,
         profiles,
       },
     });

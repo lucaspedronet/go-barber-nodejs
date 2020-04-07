@@ -4,6 +4,14 @@ import User from '../models/User';
 
 class ProviderController {
   async store(req, res) {
+    if (req.isProfile !== 'provider') {
+      return res.status(401).json({
+        message: 'You do not have authorization, you are not a provider',
+        success: false,
+        error: 'ERROR',
+        data: null,
+      });
+    }
     /**
      * @property atributes: Nos permiter retornar apenas os atributos que desejarmos de uma tabela
      * @property include: Nos permite add uma tabela em consultas de outras tabelas

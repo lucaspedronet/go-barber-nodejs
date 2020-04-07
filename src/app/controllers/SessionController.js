@@ -70,23 +70,75 @@ class SessionController {
     }
     const { id, profile, profiles, active, username } = userExists;
 
-    return res.json({
-      user: {
-        id,
-        email,
-        active,
-        profile,
-        username,
-        profiles,
-      },
-      token: jwt.sign(
+    if (profiles === null) {
+      const {
+        name,
+        phone,
+        user_id,
+        avata_id,
+        birth_date,
+        shipping_address_id,
+      } = await Profile.findOne({ where: { user_id: id } });
+
+      return res.status(200).json({
+        message: 'Registration completed with success!',
+        success: true,
+        error: null,
+        data: [
+          {
+            user: {
+              id,
+              email,
+              active,
+              profile,
+              username,
+              profiles: {
+                name,
+                phone,
+                user_id,
+                avata_id,
+                birth_date,
+                shipping_address_id,
+                avatar: null,
+              },
+            },
+            token: jwt.sign(
+              {
+                id,
+                profile,
+              },
+              authConfig.secret,
+              { expiresIn: authConfig.expiresIn }
+            ),
+          },
+        ],
+      });
+    }
+
+    return res.status(200).json({
+      message: 'Authentication successful!!',
+      success: true,
+      error: null,
+      data: [
         {
-          id,
-          profile,
+          user: {
+            id,
+            email,
+            active,
+            profile,
+            username,
+            profiles,
+          },
+          token: jwt.sign(
+            {
+              id,
+              profile,
+            },
+            authConfig.secret,
+            { expiresIn: authConfig.expiresIn }
+          ),
         },
-        authConfig.secret,
-        { expiresIn: authConfig.expiresIn }
-      ),
+      ],
     });
   }
 }
