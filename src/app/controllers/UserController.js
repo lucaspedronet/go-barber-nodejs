@@ -23,7 +23,7 @@ class UserController {
       name: Yup.string()
         .min(10)
         .max(50)
-        .required('Nome é obrigatório!'),
+        .required(),
       guid: Yup.string()
         .min(10)
         .max(50)
@@ -94,7 +94,7 @@ class UserController {
     req.body.user_id = id;
     await Profile.create(req.body);
 
-    return res.status(500).json({
+    return res.status(201).json({
       message: 'Registration completed with success!',
       success: true,
       data: 'success',
@@ -104,7 +104,16 @@ class UserController {
 
   async update(req, res) {
     const schema = Yup.object().shape({
-      username: Yup.string().max(15),
+      name: Yup.string()
+        .min(10)
+        .max(50),
+      phone: Yup.string()
+        .min(9)
+        .max(15),
+      username: Yup.string()
+        .min(5)
+        .max(50),
+      email: Yup.string().email(),
       oldpassword: Yup.string().min(6),
       password: Yup.string()
         .min(6)
@@ -127,12 +136,38 @@ class UserController {
     const { oldpassword } = req.body;
 
     const user = await User.findByPk(userId);
+    const profile = await Profile.findOne({ user_id: req.userId });
 
     if (oldpassword && !(await user.checkPassword(oldpassword))) {
       return res.status(401).json({ error: 'Password does not match' });
     }
 
+    if (req.body.email && req.body.email !== user.email) {
+      const emailExist = await User.findOne({ email: req.body.email });
+      if (emailExist) {
+        return res.status(401).json({
+          message: 'Already email exists!',
+          success: false,
+          data: 'FAILURE',
+          error: 'ERROR',
+        });
+      }
+    }
+
+    if (req.body.phone && req.body.phone !== profile.phone) {
+      const phoneExist = await Profile.findOne({ profile: req.body.phone });
+      if (phoneExist) {
+        return res.status(401).json({
+          message: 'Already email exists!',
+          success: false,
+          data: 'FAILURE',
+          error: 'ERROR',
+        });
+      }
+    }
+
     await user.update(req.body);
+    await profile.update(req.body);
 
     const { id, username, provider, active, profiles } = User.findByPk(
       req.userId,
@@ -156,8 +191,9 @@ class UserController {
 
     return res.json({
       message: 'User successfully changed',
-      error: null,
+      success: true,
       data: { id, username, provider, active, profiles },
+      error: null,
     });
   }
 }
