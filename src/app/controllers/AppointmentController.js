@@ -133,13 +133,11 @@ class AppointmentController {
     /**
      * @constructs Schema: Notification push para prestador
      */
-    const notify = await Notification.create({
+    await Notification.create({
       content: `Novo agendamento de ${user.name} para o ${formatter}`,
       user: req.userId,
       provider: provider_id,
     });
-
-    console.log(notify);
 
     /**
      * retorna appointment

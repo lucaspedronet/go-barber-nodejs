@@ -2,7 +2,6 @@ import * as Yup from 'yup';
 import User from '../models/User';
 import Profile from '../models/Profile';
 import File from '../models/File';
-// import Profile from '../models/Profile';
 
 class UserController {
   async index(req, res) {
