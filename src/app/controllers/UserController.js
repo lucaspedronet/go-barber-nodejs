@@ -210,7 +210,9 @@ class UserController {
     const { oldPassword } = req.body;
 
     const user = await User.findByPk(userId);
-    const profile = await Profile.findOne({ where: { user_id: req.userId } });
+    const useProfile = await Profile.findOne({
+      where: { user_id: req.userId },
+    });
 
     if (oldPassword && !(await user.checkPassword(oldPassword))) {
       return res.status(401).json({ error: 'Password does not match' });
@@ -230,7 +232,7 @@ class UserController {
       }
     }
 
-    if (req.body.phone && req.body.phone !== profile.phone) {
+    if (req.body.phone && req.body.phone !== useProfile.phone) {
       const phoneExist = await Profile.findOne({
         where: { phone: req.body.phone },
       });
@@ -245,9 +247,9 @@ class UserController {
     }
 
     await user.update(req.body);
-    await profile.update(req.body);
+    await useProfile.update(req.body);
 
-    const { id, username, provider, active, profiles } = await User.findByPk(
+    const { id, username, profile, active, profiles } = await User.findByPk(
       req.userId,
       {
         include: [
@@ -267,10 +269,46 @@ class UserController {
       }
     );
 
+    if (profiles === null) {
+      const {
+        name,
+        email,
+        phone,
+        user_id,
+        avata_id,
+        birth_date,
+        shipping_address_id,
+      } = await Profile.findOne({ where: { user_id: req.userId } });
+
+      return res.status(200).json({
+        message: 'Data updated successfully',
+        success: true,
+        error: null,
+        data: {
+          user: {
+            id,
+            email,
+            active,
+            profile,
+            username,
+            profiles: {
+              name,
+              phone,
+              user_id,
+              avata_id,
+              birth_date,
+              shipping_address_id,
+              avatar: null,
+            },
+          },
+        },
+      });
+    }
+
     return res.json({
       message: 'User successfully changed',
       success: true,
-      data: req.body,
+      data: { id, username, profile, active, profiles },
       error: null,
     });
   }

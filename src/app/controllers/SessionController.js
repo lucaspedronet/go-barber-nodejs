@@ -84,50 +84,22 @@ class SessionController {
         message: 'Registration completed with success!',
         success: true,
         error: null,
-        data: [
-          {
-            user: {
-              id,
-              email,
-              active,
-              profile,
-              username,
-              profiles: {
-                name,
-                phone,
-                user_id,
-                avata_id,
-                birth_date,
-                shipping_address_id,
-                avatar: null,
-              },
-            },
-            token: jwt.sign(
-              {
-                id,
-                profile,
-              },
-              authConfig.secret,
-              { expiresIn: authConfig.expiresIn }
-            ),
-          },
-        ],
-      });
-    }
-
-    return res.status(200).json({
-      message: 'Authentication successful!!',
-      success: true,
-      error: null,
-      data: [
-        {
+        data: {
           user: {
             id,
             email,
             active,
             profile,
             username,
-            profiles,
+            profiles: {
+              name,
+              phone,
+              user_id,
+              avata_id,
+              birth_date,
+              shipping_address_id,
+              avatar: null,
+            },
           },
           token: jwt.sign(
             {
@@ -138,7 +110,31 @@ class SessionController {
             { expiresIn: authConfig.expiresIn }
           ),
         },
-      ],
+      });
+    }
+
+    return res.status(200).json({
+      message: 'Authentication successful!!',
+      success: true,
+      error: null,
+      data: {
+        user: {
+          id,
+          email,
+          active,
+          profile,
+          username,
+          profiles,
+        },
+        token: jwt.sign(
+          {
+            id,
+            profile,
+          },
+          authConfig.secret,
+          { expiresIn: authConfig.expiresIn }
+        ),
+      },
     });
   }
 }
