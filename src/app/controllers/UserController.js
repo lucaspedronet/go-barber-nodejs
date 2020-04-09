@@ -203,10 +203,10 @@ class UserController {
         'id',
         'name',
         'phone',
-        'shipping_address_id',
         'user_id',
-        'birth_date',
         'avatar_id',
+        'birth_date',
+        'shipping_address_id',
       ],
       include: [
         {

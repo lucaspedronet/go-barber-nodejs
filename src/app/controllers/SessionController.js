@@ -32,20 +32,6 @@ class SessionController {
 
     const userExists = await User.findOne({
       where: { email },
-      include: [
-        {
-          model: Profile,
-          as: 'profiles',
-          attributes: ['id', 'name', 'phone'],
-          include: [
-            {
-              model: File,
-              as: 'avatar',
-              attributes: ['id', 'path', 'url'],
-            },
-          ],
-        },
-      ],
     });
 
     /**
@@ -68,64 +54,35 @@ class SessionController {
     if (!(await userExists.checkPassword(password))) {
       return res.status(401).json({ errpr: 'Password not match.' });
     }
-    const { id, profile, profiles, active, username } = userExists;
 
-    if (profiles === null) {
-      const {
-        name,
-        phone,
-        user_id,
-        avata_id,
-        birth_date,
-        shipping_address_id,
-      } = await Profile.findOne({ where: { user_id: id } });
+    const { id, username, profile, active } = userExists;
 
-      return res.status(200).json({
-        message: 'Registration completed with success!',
-        success: true,
-        error: null,
-        data: {
-          user: {
-            id,
-            email,
-            active,
-            profile,
-            username,
-            profiles: {
-              name,
-              phone,
-              user_id,
-              avata_id,
-              birth_date,
-              shipping_address_id,
-              avatar: null,
-            },
-          },
-          token: jwt.sign(
-            {
-              id,
-              profile,
-            },
-            authConfig.secret,
-            { expiresIn: authConfig.expiresIn }
-          ),
+    const profiles = await Profile.findOne({
+      where: { user_id: id },
+      attributes: [
+        'id',
+        'name',
+        'phone',
+        'user_id',
+        'avatar_id',
+        'birth_date',
+        'shipping_address_id',
+      ],
+      include: [
+        {
+          model: File,
+          as: 'avatar',
+          attributes: ['id', 'path', 'url'],
         },
-      });
-    }
+      ],
+    });
 
     return res.status(200).json({
-      message: 'Authentication successful!!',
+      message: 'Registration completed with success!',
       success: true,
       error: null,
       data: {
-        user: {
-          id,
-          email,
-          active,
-          profile,
-          username,
-          profiles,
-        },
+        user: { id, username, profile, active, email, profiles },
         token: jwt.sign(
           {
             id,
