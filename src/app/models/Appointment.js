@@ -40,6 +40,10 @@ class Appointment extends Model {
      * @augments as: 'user' toda tabela que possui mais de um relacionamento deve obrigatoriamente atribuir ap
      * pelidos aos campos relacionados, assim como no exemplo abaixo.
      */
+    this.belongsTo(models.Profile, {
+      foreignKey: 'profile_user_id',
+      as: 'profiles',
+    });
     this.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
     this.belongsTo(models.User, {
       foreignKey: 'provider_id',

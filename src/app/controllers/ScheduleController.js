@@ -7,7 +7,6 @@ import Profile from '../models/Profile';
 
 class ScheduleController {
   async index(req, res) {
-    const { date } = req.query;
     const checkUser = await User.findOne({
       where: { id: req.userId, profile: 'provider' || 'customer' },
     });
@@ -16,7 +15,7 @@ class ScheduleController {
       return res.status(400).json({ error: 'User already exists' });
     }
 
-    const parsedDate = parseISO(date);
+    const parsedDate = parseISO(req.query.date);
 
     /**
      * check todos os agendamento do provider naquele dia
@@ -34,16 +33,9 @@ class ScheduleController {
       },
       include: [
         {
-          model: User,
-          as: 'user',
-          attributes: ['id', 'profile_id'],
-          include: [
-            {
-              model: Profile,
-              as: 'profiles',
-              attributes: ['name', 'phone'],
-            },
-          ],
+          model: Profile,
+          as: 'profiles',
+          attributes: ['id', 'name', 'email', 'phone', 'user_id'],
         },
       ],
       order: ['date'],
@@ -63,7 +55,7 @@ class ScheduleController {
       return res.status(400).json({ error: 'Appointmets does not' });
     }
 
-    return res.status(200).json(appointments);
+    return res.status(200).json([...appointments]);
   }
 
   async store(req, res) {
