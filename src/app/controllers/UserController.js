@@ -5,89 +5,33 @@ import File from '../models/File';
 
 class UserController {
   async index(req, res) {
-    const {
-      id,
-      username,
-      guid,
-      email,
-      profile,
-      active,
-      profiles,
-    } = await User.findByPk(req.userId, {
+    const { id, username, email, profile, active } = await User.findByPk(
+      req.userId
+    );
+
+    const profiles = await Profile.findOne({
+      where: { user_id: req.userId },
+      attributes: [
+        'id',
+        'name',
+        'phone',
+        'shipping_address_id',
+        'user_id',
+        'birth_date',
+        'avatar_id',
+      ],
       include: [
         {
-          model: Profile,
-          as: 'profiles',
-          attributes: [
-            'id',
-            'name',
-            'phone',
-            'birth_date',
-            'user_id',
-            'avatar_id',
-            'shipping_address_id',
-          ],
-          include: [
-            {
-              model: File,
-              as: 'avatar',
-              attributes: ['id', 'path', 'url', 'name'],
-            },
-          ],
+          model: File,
+          as: 'avatar',
+          attributes: ['id', 'path', 'url'],
         },
       ],
     });
 
-    if (profiles === null) {
-      const {
-        name,
-        phone,
-        user_id,
-        avata_id,
-        birth_date,
-        shipping_address_id,
-      } = await Profile.findOne({ where: { user_id: id } });
-
-      return res.status(200).json({
-        message: 'Registration completed with success!',
-        success: true,
-        error: null,
-        data: [
-          {
-            id,
-            guid,
-            email,
-            active,
-            profile,
-            username,
-            profiles: {
-              name,
-              phone,
-              user_id,
-              avata_id,
-              birth_date,
-              shipping_address_id,
-              avatar: null,
-            },
-          },
-        ],
-      });
-    }
-
-    return res.status(200).json({
-      message: 'Registration completed with success!',
-      success: true,
-      error: null,
-      data: {
-        id,
-        username,
-        guid,
-        email,
-        profile,
-        active,
-        profiles,
-      },
-    });
+    return res
+      .status(200)
+      .json({ id, username, profile, active, email, profiles });
   }
 
   async store(req, res) {
@@ -249,68 +193,33 @@ class UserController {
     await user.update(req.body);
     await useProfile.update(req.body);
 
-    const { id, username, profile, active, profiles } = await User.findByPk(
-      req.userId,
-      {
-        include: [
-          {
-            model: Profile,
-            as: 'profiles',
-            attributes: ['id', 'name', 'phone'],
-            include: [
-              {
-                model: File,
-                as: 'avatar',
-                attributes: ['id', 'path', 'url'],
-              },
-            ],
-          },
-        ],
-      }
+    const { id, username, profile, active, email } = await User.findByPk(
+      req.userId
     );
 
-    if (profiles === null) {
-      const {
-        name,
-        email,
-        phone,
-        user_id,
-        avata_id,
-        birth_date,
-        shipping_address_id,
-      } = await Profile.findOne({ where: { user_id: req.userId } });
-
-      return res.status(200).json({
-        message: 'Data updated successfully',
-        success: true,
-        error: null,
-        data: {
-          user: {
-            id,
-            email,
-            active,
-            profile,
-            username,
-            profiles: {
-              name,
-              phone,
-              user_id,
-              avata_id,
-              birth_date,
-              shipping_address_id,
-              avatar: null,
-            },
-          },
+    const profiles = await Profile.findOne({
+      where: { user_id: req.userId },
+      attributes: [
+        'id',
+        'name',
+        'phone',
+        'shipping_address_id',
+        'user_id',
+        'birth_date',
+        'avatar_id',
+      ],
+      include: [
+        {
+          model: File,
+          as: 'avatar',
+          attributes: ['id', 'path', 'url'],
         },
-      });
-    }
-
-    return res.json({
-      message: 'User successfully changed',
-      success: true,
-      data: { id, username, profile, active, profiles },
-      error: null,
+      ],
     });
+
+    return res
+      .status(200)
+      .json({ id, username, profile, active, email, profiles });
   }
 }
 
