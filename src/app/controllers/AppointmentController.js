@@ -121,6 +121,7 @@ class AppointmentController {
       provider_id,
       date: hourStart,
       service_provider_id: 2,
+      profile_user_id: req.userId,
     });
 
     /**
