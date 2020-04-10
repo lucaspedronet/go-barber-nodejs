@@ -114,14 +114,14 @@ class AppointmentController {
       return res.status(401).json({ error: 'Appointment is not available' });
     }
 
-    const user = await Profile.findOne({ where: { user_id: req.userId } });
+    const profile = await Profile.findOne({ where: { user_id: req.userId } });
 
     const appointment = await Appointment.create({
       user_id: req.userId,
       provider_id,
       date: hourStart,
       service_provider_id: 2,
-      profile_user_id: req.userId,
+      profile_user_id: profile.id,
     });
 
     /**
@@ -135,7 +135,7 @@ class AppointmentController {
      * @constructs Schema: Notification push para prestador
      */
     await Notification.create({
-      content: `Novo agendamento de ${user.name} para o ${formatter}`,
+      content: `Novo agendamento de ${profile.name} para o ${formatter}`,
       user: req.userId,
       provider: provider_id,
     });
