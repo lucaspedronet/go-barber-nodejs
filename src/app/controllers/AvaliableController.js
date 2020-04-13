@@ -6,10 +6,13 @@ import {
   setSeconds,
   format,
   isAfter,
+  getISODay,
+  setMilliseconds,
 } from 'date-fns';
 import { Op } from 'sequelize';
 import Appointment from '../models/Appointment';
 import Schedule from '../models/Schedule';
+import { week } from '../../lib/SchedulesWeek';
 
 class AvaliableController {
   async store(req, res) {
@@ -28,25 +31,14 @@ class AvaliableController {
       },
     });
 
+    const weekDay = week.find(d => d.key === getISODay(seachDate));
+
     const schedules = await Schedule.findOne({
       where: { profile_id: req.profileId },
-      attributes: [
-        'id',
-        'monday',
-        'tuesday',
-        'wednesday',
-        'thursday',
-        'friday',
-        'saturday',
-        'sunday',
-        'profile_id',
-        'object',
-      ],
+      attributes: [weekDay.value.week],
     });
 
-    console.log(req.profileId);
-    console.log(req.userId);
-    console.log(schedules);
+    const scheduleWeek = schedules.dataValues[weekDay.value.week][0].split(',');
 
     const schedule = [
       '08:30',
@@ -62,17 +54,21 @@ class AvaliableController {
       '18:00',
     ];
 
-    const availiable = schedule.map(time => {
+    const availiable = scheduleWeek.map(time => {
       const [hour, minute] = time.split(':');
       const value = setSeconds(
         setMinutes(setHours(seachDate, hour), minute),
         0
       );
+      const checkDate = setMilliseconds(
+        setSeconds(setMinutes(setHours(seachDate, hour), minute), 0),
+        0
+      );
       return {
         time,
-        value: format(value, "yyyy-MM-dd'T'HH:mm:ssxxx"),
+        value: format(checkDate, "yyyy-MM-dd'T'HH:mm:ssxxx"),
         availiable:
-          isAfter(value, new Date()) &&
+          isAfter(checkDate, new Date()) &&
           !appointments.find(a => format(a.date, 'HH:mm') === time),
       };
     });
