@@ -87,6 +87,7 @@ class SessionController {
           {
             id,
             profile,
+            profileId: profiles.id,
           },
           authConfig.secret,
           { expiresIn: authConfig.expiresIn }

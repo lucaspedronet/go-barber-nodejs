@@ -29,7 +29,7 @@ export default async (req, res, next) => {
      * esta realizando uma verificação/comparação entre *token* e *authConfug.secret*. Caso NÃO seja iguis
      * (token, authConfug.secret) irá cair diretamente para o cath.
      */
-    const { id, profile } = await promisify(jwt.verify)(
+    const { id, profile, profileId } = await promisify(jwt.verify)(
       token,
       authConfig.secret
     );
@@ -39,6 +39,7 @@ export default async (req, res, next) => {
      */
     req.userId = id;
     req.isProfile = profile;
+    req.profileId = profileId;
 
     return next();
   } catch (error) {

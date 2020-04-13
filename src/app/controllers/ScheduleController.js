@@ -4,6 +4,7 @@ import { Op } from 'sequelize';
 import Appointment from '../models/Appointment';
 import User from '../models/User';
 import Profile from '../models/Profile';
+import Schedule from '../models/Schedule';
 
 class ScheduleController {
   async index(req, res) {
@@ -59,20 +60,16 @@ class ScheduleController {
   }
 
   async store(req, res) {
-    const userExits = User.findByPk(req.userId);
-    if (!userExits) {
-      return res.status(401).json({ error: 'User already exists' });
+    if (req.isProfile !== 'provider') {
+      return res
+        .status(401)
+        .json({ error: "User not permission 'create hour'" });
     }
 
-    if (req.isProfile !== 'provider') {
-      return res.status(401).json({ error: 'User not permission create hour' });
-    }
+    console.log(req.body);
 
     return res.status(200).json({
-      ok: differenceInHours(
-        new Date('2020-03-16T09:30:00-03:00'),
-        new Date('2020-03-16T06:00:00-03:00')
-      ),
+      ok: true,
     });
   }
 }

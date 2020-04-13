@@ -14,10 +14,15 @@ import Queue from '../../lib/Queue';
 
 class AppointmentController {
   async index(req, res) {
+    if (req.profile && req.profile !== 'provider') {
+      return res.status(401).json({
+        error: "You can only 'search' for an appointment with the provider",
+      });
+    }
     const { page } = req.query;
 
     const appointments = await Appointment.findAll({
-      where: { user_id: req.userId, canceled_at: null },
+      where: { provider_id: req.userId, canceled_at: null },
       order: ['date'],
       attributes: ['id', 'date', 'past', 'cancelable'],
       limit: 20,
@@ -75,7 +80,7 @@ class AppointmentController {
     if (!checkProvider) {
       return res
         .status(401)
-        .json({ error: 'You can only create appointment with provider' });
+        .json({ error: "You can only 'create' appointment with provider" });
     }
 
     /**
@@ -171,7 +176,7 @@ class AppointmentController {
     /**
      * check: verifica se o usuário que esta logado é dono do agendamento/compromisso
      */
-    if (appointment && appointment.user_id !== req.userId) {
+    if (appointment && appointment.provider_id !== req.userId) {
       return res.status(401).json({
         error: "You don't have permission to cancell this appointment",
       });
