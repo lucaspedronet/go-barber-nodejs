@@ -9,6 +9,7 @@ import {
 } from 'date-fns';
 import { Op } from 'sequelize';
 import Appointment from '../models/Appointment';
+import Schedule from '../models/Schedule';
 
 class AvaliableController {
   async store(req, res) {
@@ -26,6 +27,26 @@ class AvaliableController {
         date: { [Op.between]: [startOfDay(seachDate), endOfDay(seachDate)] },
       },
     });
+
+    const schedules = await Schedule.findOne({
+      where: { profile_id: req.profileId },
+      attributes: [
+        'id',
+        'monday',
+        'tuesday',
+        'wednesday',
+        'thursday',
+        'friday',
+        'saturday',
+        'sunday',
+        'profile_id',
+        'object',
+      ],
+    });
+
+    console.log(req.profileId);
+    console.log(req.userId);
+    console.log(schedules);
 
     const schedule = [
       '08:30',

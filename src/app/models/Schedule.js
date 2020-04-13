@@ -6,12 +6,11 @@ class Schedule extends Model {
       {
         monday: Sequelize.ARRAY(Sequelize.STRING),
         tuesday: Sequelize.ARRAY(Sequelize.STRING),
-        wesdnesday: Sequelize.ARRAY(Sequelize.STRING),
+        wednesday: Sequelize.ARRAY(Sequelize.STRING),
         thursday: Sequelize.ARRAY(Sequelize.STRING),
         friday: Sequelize.ARRAY(Sequelize.STRING),
         saturday: Sequelize.ARRAY(Sequelize.STRING),
         sunday: Sequelize.ARRAY(Sequelize.STRING),
-        profile_id: Sequelize.INTEGER,
       },
       { sequelize }
     );

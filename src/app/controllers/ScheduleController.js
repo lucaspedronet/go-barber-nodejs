@@ -1,4 +1,5 @@
-import { startOfDay, endOfDay, parseISO, differenceInHours } from 'date-fns';
+import { startOfDay, endOfDay, parseISO } from 'date-fns';
+import * as Yup from 'yup';
 import { Op } from 'sequelize';
 
 import Appointment from '../models/Appointment';
@@ -60,17 +61,48 @@ class ScheduleController {
   }
 
   async store(req, res) {
+    const schema = Yup.object().shape({
+      monday: Yup.string(),
+      tuesday: Yup.string(),
+      wednesday: Yup.string(),
+      thursday: Yup.string(),
+      friday: Yup.string(),
+      saturday: Yup.string(),
+      sunday: Yup.string(),
+    });
+
     if (req.isProfile !== 'provider') {
       return res
         .status(401)
-        .json({ error: "User not permission 'create hour'" });
+        .json({ error: "User not permission 'create schedules'" });
     }
 
-    console.log(req.body);
+    if (!(await schema.isValid(req.body))) {
+      return res.status(401).json({ error: 'Validation fails' });
+    }
 
-    return res.status(200).json({
-      ok: true,
+    const {
+      monday,
+      tuesday,
+      wednesday,
+      thursday,
+      friday,
+      saturday,
+      sunday,
+    } = req.body;
+
+    const schedule = await Schedule.create({
+      monday: [monday],
+      tuesday: [tuesday],
+      wednesday: [wednesday],
+      thursday: [thursday],
+      friday: [friday],
+      saturday: [saturday],
+      sunday: [sunday],
+      profile_id: req.profileId,
     });
+
+    return res.status(200).json(schedule);
   }
 }
 
