@@ -6,6 +6,8 @@ import Appointment from '../models/Appointment';
 import User from '../models/User';
 import Profile from '../models/Profile';
 import Schedule from '../models/Schedule';
+import Service from '../models/Service';
+import File from '../models/File';
 
 class ScheduleController {
   async index(req, res) {
@@ -33,23 +35,25 @@ class ScheduleController {
           [Op.between]: [startOfDay(parsedDate), endOfDay(parsedDate)],
         },
       },
+      order: ['date'],
       include: [
         {
           model: Profile,
           as: 'profiles',
           attributes: ['id', 'name', 'email', 'phone', 'user_id'],
         },
-      ],
-      order: ['date'],
-      attributes: [
-        'id',
-        'past',
-        'cancelable',
-        'date',
-        'service_provider_id',
-        'created_at',
-        'updated_at',
-        'canceled_at',
+        {
+          model: Service,
+          as: 'service',
+          attributes: ['title', 'description', 'category'],
+          include: [
+            {
+              model: File,
+              as: 'image',
+              attributes: ['id', 'path', 'url'],
+            },
+          ],
+        },
       ],
     });
 

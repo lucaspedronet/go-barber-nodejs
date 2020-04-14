@@ -23,6 +23,7 @@ class AvaliableController {
 
     const seachDate = Number(date);
 
+    // searches for all available appointments and a set date
     const appointments = await Appointment.findAll({
       where: {
         provider_id: req.userId,
@@ -31,6 +32,7 @@ class AvaliableController {
       },
     });
 
+    // check which day of the week
     const weekDay = week.find(d => d.key === getISODay(seachDate));
 
     const schedules = await Schedule.findOne({
@@ -42,14 +44,11 @@ class AvaliableController {
       ? schedules.dataValues[weekDay.value.week][0].split(',')
       : null;
 
-    if (!scheduleWeek) return res.status(200).json([]);
+    if (!scheduleWeek)
+      return res.status(200).json({ availiable: [], scheduleWeek: [] });
 
     const availiable = scheduleWeek.map(time => {
       const [hour, minute] = time.split(':');
-      const value = setSeconds(
-        setMinutes(setHours(seachDate, hour), minute),
-        0
-      );
       const checkDate = setMilliseconds(
         setSeconds(setMinutes(setHours(seachDate, hour), minute), 0),
         0
