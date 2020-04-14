@@ -24,38 +24,25 @@ class AppointmentController {
     const appointments = await Appointment.findAll({
       where: { provider_id: req.userId, canceled_at: null },
       order: ['date'],
-      attributes: ['id', 'date', 'past', 'cancelable'],
       limit: 20,
       offset: (page - 1) * 20,
       include: [
         {
-          model: User,
-          as: 'provider',
-          attributes: ['username'],
+          model: Profile,
+          as: 'profiles',
+          attributes: ['id', 'name', 'phone', 'email', 'shipping_address_id'],
           include: [
             {
-              model: Profile,
-              as: 'profiles',
-              attributes: ['id', 'name', 'phone', 'shipping_address_id'],
-              include: [
-                {
-                  model: File,
-                  as: 'avatar',
-                  attributes: ['id', 'path', 'url'],
-                },
-              ],
+              model: File,
+              as: 'avatar',
+              attributes: ['id', 'path', 'url'],
             },
           ],
         },
       ],
     });
 
-    return res.status(200).json({
-      message: 'Success request',
-      success: true,
-      data: appointments,
-      error: null,
-    });
+    return res.status(200).json(appointments);
   }
 
   async store(req, res) {
@@ -100,6 +87,7 @@ class AppointmentController {
     if (isBefore(hourStart, new Date())) {
       return res.status(400).json({ error: 'Past date ware not permitted' });
     }
+    console.log(hourStart);
 
     /**
      * check date avaliability

@@ -38,21 +38,12 @@ class AvaliableController {
       attributes: [weekDay.value.week],
     });
 
-    const scheduleWeek = schedules.dataValues[weekDay.value.week][0].split(',');
+    const scheduleWeek = schedules.dataValues[weekDay.value.week][0]
+      ? schedules.dataValues[weekDay.value.week][0].split(',')
+      : null;
+    console.log(scheduleWeek);
 
-    const schedule = [
-      '08:30',
-      '09:00',
-      '09:30',
-      '10:00',
-      '10:30',
-      '13:00',
-      '14:00',
-      '15:00',
-      '16:00',
-      '17:00',
-      '18:00',
-    ];
+    if (!scheduleWeek) return res.status(200).json([]);
 
     const availiable = scheduleWeek.map(time => {
       const [hour, minute] = time.split(':');
@@ -73,7 +64,7 @@ class AvaliableController {
       };
     });
 
-    return res.status(200).json(availiable);
+    return res.status(200).json({ availiable, scheduleWeek });
   }
 }
 
