@@ -25,7 +25,7 @@ class AvaliableController {
 
     const appointments = await Appointment.findAll({
       where: {
-        provider_id: req.params.providerId,
+        provider_id: req.userId,
         canceled_at: null,
         date: { [Op.between]: [startOfDay(seachDate), endOfDay(seachDate)] },
       },
