@@ -11,6 +11,7 @@ import Profile from '../models/Profile';
 
 import CancellationMail from '../jobs/CancellationMail';
 import Queue from '../../lib/Queue';
+import Service from '../models/Service';
 
 class AppointmentController {
   async index(req, res) {
@@ -39,6 +40,18 @@ class AppointmentController {
             },
           ],
         },
+        {
+          model: Service,
+          as: 'service',
+          attributes: ['title', 'description', 'category'],
+          include: [
+            {
+              model: File,
+              as: 'image',
+              attributes: ['id', 'path', 'url'],
+            },
+          ],
+        },
       ],
     });
 
@@ -49,13 +62,14 @@ class AppointmentController {
     const schema = Yup.object().shape({
       provider_id: Yup.number().required(),
       date: Yup.string().required(),
+      service_provider_id: Yup.number().required(),
     });
 
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
-    const { provider_id, date } = req.body;
+    const { provider_id, date, service_provider_id } = req.body;
 
     /**
      * check is provider: verifica se existe algum provider com esse id: provider_id
@@ -87,7 +101,6 @@ class AppointmentController {
     if (isBefore(hourStart, new Date())) {
       return res.status(400).json({ error: 'Past date ware not permitted' });
     }
-    console.log(hourStart);
 
     /**
      * check date avaliability
@@ -113,7 +126,7 @@ class AppointmentController {
       user_id: req.userId,
       provider_id,
       date: hourStart,
-      service_provider_id: 2,
+      service_provider_id,
       profile_user_id: profile.id,
     });
 

@@ -41,7 +41,6 @@ class AvaliableController {
     const scheduleWeek = schedules.dataValues[weekDay.value.week][0]
       ? schedules.dataValues[weekDay.value.week][0].split(',')
       : null;
-    console.log(scheduleWeek);
 
     if (!scheduleWeek) return res.status(200).json([]);
 
