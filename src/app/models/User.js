@@ -28,13 +28,6 @@ class User extends Model {
     return this;
   }
 
-  static associate(models) {
-    this.belongsTo(models.Profile, {
-      foreignKey: 'profile_id',
-      as: 'profiles',
-    });
-  }
-
   checkPassword(password) {
     return bcript.compare(password, this.password_hash);
   }

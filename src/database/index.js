@@ -14,6 +14,7 @@ import WeekShift from '../app/models/WeekShift';
 import DayShift from '../app/models/DayShift';
 import Category from '../app/models/Category';
 import Schedule from '../app/models/Schedule';
+import Merchant from '../app/models/Merchant';
 
 import databaseConfig from '../config/database';
 
@@ -22,6 +23,7 @@ const models = [
   ServicePrice,
   Appointment,
   WeekShift,
+  Merchant,
   Schedule,
   Category,
   DayShift,

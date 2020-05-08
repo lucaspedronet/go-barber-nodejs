@@ -8,7 +8,6 @@ class Profile extends Model {
         name: Sequelize.STRING,
         email: Sequelize.STRING,
         phone: Sequelize.STRING,
-        user_id: Sequelize.STRING,
         birth_date: Sequelize.DATE,
       },
       {
@@ -27,6 +26,10 @@ class Profile extends Model {
     this.belongsTo(models.ShippingAddress, {
       foreignKey: 'shipping_address_id',
       as: 'shipping_address',
+    });
+    this.belongsTo(models.Merchant, {
+      foreignKey: 'merchant_id',
+      as: 'owner_boss',
     });
   }
 }

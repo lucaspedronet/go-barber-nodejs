@@ -2,6 +2,7 @@ import * as Yup from 'yup';
 import User from '../models/User';
 import Profile from '../models/Profile';
 import File from '../models/File';
+import Merchant from '../models/Merchant';
 
 class UserController {
   async index(req, res) {
@@ -42,6 +43,11 @@ class UserController {
         .min(10)
         .max(50)
         .required(),
+      title: Yup.string()
+        .min(3)
+        .max(50)
+        .required(),
+      branch: Yup.string().required(),
       guid: Yup.string()
         .min(10)
         .max(50)
@@ -108,8 +114,13 @@ class UserController {
     }
 
     const { id } = await User.create(req.body);
-
     req.body.user_id = id;
+
+    const merchant = await Merchant.create(req.body);
+    req.body.merchant_id = merchant.id;
+
+    console.log(req.body);
+
     await Profile.create(req.body);
 
     return res.status(201).json({
