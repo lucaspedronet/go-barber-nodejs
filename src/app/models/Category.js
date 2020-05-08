@@ -1,10 +1,11 @@
 import Sequelize, { Model } from 'sequelize';
 
-class CategoryService extends Model {
+class Category extends Model {
   static init(sequelize) {
     super.init(
       {
         title: Sequelize.STRING(30),
+        type: Sequelize.ENUM('merchant', 'service'),
       },
       { sequelize }
     );
@@ -12,4 +13,4 @@ class CategoryService extends Model {
   }
 }
 
-export default CategoryService;
+export default Category;

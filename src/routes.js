@@ -14,7 +14,7 @@ import ShippingAddressController from './app/controllers/ShippingAddressControll
 
 import authMiddlware from './app/middleware/auth';
 import multerConfig from './config/multer';
-import CategoryServiceController from './app/controllers/CategoryServiceController';
+import CategoryController from './app/controllers/CategoryController';
 
 const routes = new Router();
 /**
@@ -60,7 +60,7 @@ routes.get('/v1/services', ServiceController.index);
 
 routes.post('/v1/shipping/address', ShippingAddressController.store);
 
-routes.get('/v1/category/services', CategoryServiceController.index);
-routes.post('/v1/category/services', CategoryServiceController.store);
+routes.get('/v1/category/services', CategoryController.index);
+routes.post('/v1/category/services', CategoryController.store);
 
 export default routes;

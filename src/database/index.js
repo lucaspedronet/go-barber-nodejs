@@ -12,18 +12,18 @@ import ServicePrice from '../app/models/ServicePrice';
 import Service from '../app/models/Service';
 import WeekShift from '../app/models/WeekShift';
 import DayShift from '../app/models/DayShift';
-import CategoryService from '../app/models/CategoryService';
+import Category from '../app/models/Category';
 import Schedule from '../app/models/Schedule';
 
 import databaseConfig from '../config/database';
 
 const models = [
   ShippingAddress,
-  CategoryService,
   ServicePrice,
   Appointment,
   WeekShift,
   Schedule,
+  Category,
   DayShift,
   Service,
   Profile,

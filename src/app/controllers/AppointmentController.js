@@ -96,7 +96,7 @@ class AppointmentController {
     /**
      * check for past dates
      */
-    const hourStart = startOfHour(parseISO(date));
+    const hourStart = parseISO(date);
 
     if (isBefore(hourStart, new Date())) {
       return res.status(400).json({ error: 'Past date ware not permitted' });

@@ -54,7 +54,7 @@ class AvaliableController {
         0
       );
       return {
-        time,
+        time: `${hour}:${minute}`,
         value: format(checkDate, "yyyy-MM-dd'T'HH:mm:ssxxx"),
         availiable:
           isAfter(checkDate, new Date()) &&

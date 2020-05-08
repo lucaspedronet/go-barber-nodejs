@@ -1,6 +1,6 @@
-import CategoryService from '../models/CategoryService';
+import Category from '../models/Category';
 
-class CategoryServiceController {
+class CategoryController {
   async index(req, res) {
     if (req.isProfile !== 'provider') {
       return res
@@ -8,8 +8,8 @@ class CategoryServiceController {
         .json({ error: "You can only 'create category' with provider" });
     }
 
-    const categoryAll = await CategoryService.findAll({
-      attributes: ['id', 'title'],
+    const categoryAll = await Category.findAll({
+      attributes: ['id', 'title', 'type'],
       order: ['title'],
     });
 
@@ -25,7 +25,7 @@ class CategoryServiceController {
         .json({ error: "You can only 'create category' with provider" });
     }
 
-    const categoryExists = await CategoryService.findOne({
+    const categoryExists = await Category.findOne({
       where: { title: req.body.title },
     });
 
@@ -33,14 +33,12 @@ class CategoryServiceController {
       return res.status(401).json({ error: 'Category already not exists' });
     }
 
-    const { id, title } = await CategoryService.create(req.body);
+    const { id, title, type } = await Category.create(req.body);
 
     return res
       .status(201)
-      .json({ error: null, messager: 'success', data: { id, title } });
+      .json({ error: null, messager: 'success', data: { id, title, type } });
   }
-
-  async update(req, res) {}
 }
 
-export default new CategoryServiceController();
+export default new CategoryController();

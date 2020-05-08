@@ -61,7 +61,7 @@ class ScheduleController {
       return res.status(400).json({ error: 'Appointmets does not' });
     }
 
-    return res.status(200).json([...appointments]);
+    return res.status(200).json(appointments);
   }
 
   async store(req, res) {
